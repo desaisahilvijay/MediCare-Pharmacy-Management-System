@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="sales-history-container">
+    <h2 class="mb-4">
+        <i class="fas fa-history"></i> Sales History
+    </h2>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover animated-table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Bill #</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale, customer in sales %}
+                <tr class="table-row">
+                    <td><strong>#{{ sale.id }}</strong></td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.phone }}</td>
+                    <td>{{ sale.date.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td class="text-success"><strong>${{ "%.2f"|format(sale.total_amount) }}</strong></td>
+                    <td>
+                        <a href="/bill/{{ sale.id }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-receipt"></i> View Bill
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.sales-history-container {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animated-table .table-row {
+    transition: all 0.3s ease;
+    animation: slideInLeft 0.5s ease-out;
+}
+
+.animated-table .table-row:hover {
+    transform: translateX(5px);
+    background-color: #f8f9fa !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.table-row');
+    rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+</script>
+{% endblock %}

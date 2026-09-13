@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bill-container" id="billContainer">
+    <div class="bill-header text-center mb-4">
+        <img src="/static/logo.svg" alt="MediCare Logo" class="bill-logo mb-3">
+        <h2 class="pharmacy-name">MediCare Pharmacy</h2>
+        <p class="pharmacy-address">123 Health Street, Medical City<br>Phone: (555) 123-4567</p>
+        <hr>
+    </div>
+    
+    <div class="bill-info row mb-3">
+        <div class="col-md-6">
+            <strong>Bill No:</strong> #{{ sale.id }}<br>
+            <strong>Date:</strong> {{ sale.date.strftime('%d/%m/%Y %H:%M') }}
+        </div>
+        <div class="col-md-6 text-end">
+            <strong>Customer:</strong> {{ customer.name }}<br>
+            <strong>Phone:</strong> {{ customer.phone }}
+        </div>
+    </div>
+    
+    <table class="table table-bordered bill-table">
+        <thead class="table-primary">
+            <tr>
+                <th>Medicine</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale_item, medicine in sale_items %}
+            <tr class="bill-item">
+                <td>{{ medicine.name }}</td>
+                <td>{{ sale_item.quantity }}</td>
+                <td>${{ "%.2f"|format(sale_item.unit_price) }}</td>
+                <td>${{ "%.2f"|format(sale_item.quantity * sale_item.unit_price) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="table-success">
+                <th colspan="3" class="text-end">Total Amount:</th>
+                <th>${{ "%.2f"|format(sale.total_amount) }}</th>
+            </tr>
+        </tfoot>
+    </table>
+    
+    <div class="bill-footer text-center mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <p><em>Thank you for choosing MediCare Pharmacy!</em></p>
+                <p><small>Please keep this bill for your records</small></p>
+            </div>
+            <div class="col-md-4">
+                <div class="qr-code-container">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="qr-code">
+                    <p><small>Scan for bill details</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4 no-print">
+    <button onclick="printBill()" class="btn btn-primary btn-lg me-3">
+        <i class="fas fa-print"></i> Print Bill
+    </button>
+    <a href="/download_bill/{{ sale.id }}" class="btn btn-success btn-lg me-3">
+        <i class="fas fa-download"></i> Download Bill
+    </a>
+    <a href="/sales" class="btn btn-secondary btn-lg">
+        <i class="fas fa-arrow-left"></i> Back to Sales
+    </a>
+</div>
+
+<style>
+.bill-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    animation: slideIn 0.5s ease-out;
+}
+
+.pharmacy-name {
+    color: #0d6efd;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.pharmacy-address {
+    color: #666;
+    font-size: 14px;
+}
+
+.bill-logo {
+    width: 120px;
+    height: auto;
+}
+
+.qr-code-container {
+    text-align: center;
+}
+
+.qr-code {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #0d6efd;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.bill-table {
+    margin: 20px 0;
+}
+
+.bill-item {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.bill-footer {
+    border-top: 2px solid #0d6efd;
+    padding-top: 15px;
+    margin-top: 20px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media print {
+    .no-print { display: none !important; }
+    .bill-container { box-shadow: none; }
+    body { background: white !important; }
+}
+</style>
+
+<script>
+function printBill() {
+    window.print();
+}
+
+// Add animation delay to bill items
+document.addEventListener('DOMContentLoaded', function() {
+    const items = document.querySelectorAll('.bill-item');
+    items.forEach((item, index) => {
+        item.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+</script>
+{% endblock %}

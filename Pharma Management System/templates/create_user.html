@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <h2 class="text-white">
+                <i class="fas fa-user-plus"></i> Create New Admin User
+            </h2>
+        </div>
+        <div class="col-auto">
+            <a href="/admin" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left"></i> Back to Admin
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card create-user-card">
+    <div class="card-header bg-success text-white">
+        <h5><i class="fas fa-user-shield"></i> Add New Administrator</h5>
+    </div>
+    <div class="card-body">
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+                    <small class="form-text text-muted">Choose a unique username for the new admin</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    <small class="form-text text-muted">Use a strong password</small>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-success btn-lg me-3">
+                        <i class="fas fa-user-plus"></i> Create Admin User
+                    </button>
+                    <a href="/admin" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-info-circle"></i> Admin User Information</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Admin users can:</strong></p>
+        <ul>
+            <li><i class="fas fa-check text-success"></i> View sales statistics and revenue</li>
+            <li><i class="fas fa-check text-success"></i> Add, edit, and delete medicines</li>
+            <li><i class="fas fa-check text-success"></i> Manage inventory and pricing</li>
+            <li><i class="fas fa-check text-success"></i> Access all sales reports</li>
+            <li><i class="fas fa-check text-success"></i> Create additional admin users</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.create-user-card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: slideIn 0.6s ease-out;
+}
+
+.form-control {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

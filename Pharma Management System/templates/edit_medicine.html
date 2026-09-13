@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <h2 class="text-white">
+                <i class="fas fa-edit"></i> Edit Medicine
+            </h2>
+        </div>
+        <div class="col-auto">
+            <a href="/admin/medicines" class="btn btn-outline-light">
+                <i class="fas fa-arrow-left"></i> Back to Medicines
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card edit-form-card">
+    <div class="card-header bg-warning text-dark">
+        <h5><i class="fas fa-pills"></i> Edit Medicine Details</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-capsules"></i> Medicine Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ medicine.name }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label"><i class="fas fa-tags"></i> Category</label>
+                    <input type="text" name="category" class="form-control" value="{{ medicine.category }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-dollar-sign"></i> Price</label>
+                    <input type="number" name="price" class="form-control" step="0.01" value="{{ medicine.price }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-boxes"></i> Stock Quantity</label>
+                    <input type="number" name="stock" class="form-control" value="{{ medicine.stock }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label"><i class="fas fa-calendar"></i> Expiry Date</label>
+                    <input type="date" name="expiry_date" class="form-control" value="{{ medicine.expiry_date }}" required>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-warning btn-lg me-3">
+                        <i class="fas fa-save"></i> Update Medicine
+                    </button>
+                    <a href="/admin/medicines" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.edit-form-card {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: slideIn 0.6s ease-out;
+}
+
+.form-control {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

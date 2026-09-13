@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="sales-container">
+    <h2 class="mb-4">
+        <i class="fas fa-shopping-cart"></i> Process Sale
+    </h2>
+
+    <div class="card sale-card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-cash-register"></i> New Sale Transaction
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="/process_sale" id="saleForm">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label"><i class="fas fa-user"></i> Customer</label>
+                        <div class="mb-2">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="customer_type" id="existing_customer" value="existing" checked>
+                                <label class="form-check-label" for="existing_customer">Existing</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="customer_type" id="new_customer" value="new">
+                                <label class="form-check-label" for="new_customer">New Customer</label>
+                            </div>
+                        </div>
+                        <select name="customer_id" class="form-select" id="customerSelect">
+                            <option value="">Select Customer</option>
+                            {% for customer in customers %}
+                            <option value="{{ customer.id }}">{{ customer.name }} - {{ customer.phone }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="newCustomerFields" style="display: none;">
+                            <input type="text" name="new_customer_name" class="form-control mb-2" placeholder="Customer Name">
+                            <input type="tel" name="new_customer_phone" class="form-control mb-2" placeholder="Phone Number">
+                            <input type="email" name="new_customer_email" class="form-control" placeholder="Email (Optional)">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label"><i class="fas fa-pills"></i> Medicine</label>
+                        <select name="medicine_id" class="form-select" required id="medicineSelect">
+                            <option value="">Select Medicine</option>
+                            {% for medicine in medicines %}
+                            <option value="{{ medicine.id }}" data-price="{{ medicine.price }}" data-stock="{{ medicine.stock }}">
+                                {{ medicine.name }} - ${{ medicine.price }} (Stock: {{ medicine.stock }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label"><i class="fas fa-sort-numeric-up"></i> Quantity</label>
+                        <input type="number" name="quantity" class="form-control" required min="1" id="quantityInput">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Total</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="text" class="form-control" id="totalAmount" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-success btn-lg pulse-btn">
+                            <i class="fas fa-shopping-cart"></i> Process Sale & Generate Bill
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.sales-container {
+    animation: slideInDown 0.6s ease-out;
+}
+
+.sale-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.pulse-btn {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-select, .form-control {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const medicineSelect = document.getElementById('medicineSelect');
+    const quantityInput = document.getElementById('quantityInput');
+    const totalAmount = document.getElementById('totalAmount');
+    
+    function calculateTotal() {
+        const selectedOption = medicineSelect.options[medicineSelect.selectedIndex];
+        const quantity = parseInt(quantityInput.value) || 0;
+        
+        if (selectedOption && selectedOption.dataset.price) {
+            const price = parseFloat(selectedOption.dataset.price);
+            const total = price * quantity;
+            totalAmount.value = total.toFixed(2);
+        } else {
+            totalAmount.value = '';
+        }
+    }
+    
+    medicineSelect.addEventListener('change', calculateTotal);
+    quantityInput.addEventListener('input', calculateTotal);
+    
+    // Toggle customer input fields
+    const existingCustomerRadio = document.getElementById('existing_customer');
+    const newCustomerRadio = document.getElementById('new_customer');
+    const customerSelect = document.getElementById('customerSelect');
+    const newCustomerFields = document.getElementById('newCustomerFields');
+    
+    existingCustomerRadio.addEventListener('change', function() {
+        if (this.checked) {
+            customerSelect.style.display = 'block';
+            newCustomerFields.style.display = 'none';
+            customerSelect.required = true;
+            document.querySelector('input[name="new_customer_name"]').required = false;
+            document.querySelector('input[name="new_customer_phone"]').required = false;
+        }
+    });
+    
+    newCustomerRadio.addEventListener('change', function() {
+        if (this.checked) {
+            customerSelect.style.display = 'none';
+            newCustomerFields.style.display = 'block';
+            customerSelect.required = false;
+            document.querySelector('input[name="new_customer_name"]').required = true;
+            document.querySelector('input[name="new_customer_phone"]').required = true;
+        }
+    });
+});
+</script>
+{% endblock %}

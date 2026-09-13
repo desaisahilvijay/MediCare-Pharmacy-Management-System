@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="customers-container">
+    <div class="page-header text-center mb-5">
+        <h1 class="display-4 text-white mb-3">
+            <i class="fas fa-users"></i> Customer Management
+        </h1>
+        <p class="lead text-white-50">Manage your valued customers</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <button class="btn creative-btn btn-gradient-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                <i class="fas fa-user-plus"></i> Add New Customer
+            </button>
+        </div>
+    </div>
+
+    <div class="creative-card">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-address-book"></i> Customer Directory
+            </h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table creative-table mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-user"></i> Name</th>
+                            <th><i class="fas fa-phone"></i> Phone</th>
+                            <th><i class="fas fa-envelope"></i> Email</th>
+                            <th><i class="fas fa-calendar"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr class="customer-row">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-3">
+                                        {{ customer.name[0].upper() }}
+                                    </div>
+                                    <strong>{{ customer.name }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary rounded-pill">
+                                    <i class="fas fa-phone-alt"></i> {{ customer.phone }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if customer.email %}
+                                    <span class="text-success">
+                                        <i class="fas fa-check-circle"></i> {{ customer.email }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">
+                                        <i class="fas fa-minus-circle"></i> Not provided
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm creative-btn btn-gradient-warning">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addCustomerModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-radius-creative">
+            <form method="POST" action="/add_customer">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus"></i> Add New Customer
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-user text-primary"></i> Customer Name
+                            </label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter full name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-phone text-success"></i> Phone Number
+                            </label>
+                            <input type="tel" name="phone" class="form-control" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">
+                                <i class="fas fa-envelope text-warning"></i> Email Address (Optional)
+                            </label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter email address">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn creative-btn btn-gradient-success">
+                        <i class="fas fa-plus"></i> Add Customer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.customers-container {
+    animation: fadeInScale 0.8s ease-out;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.customer-row {
+    animation-delay: calc(var(--i) * 0.1s);
+}
+
+.page-header {
+    animation: slideInUp 0.6s ease-out;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add staggered animation to customer rows
+    const rows = document.querySelectorAll('.customer-row');
+    rows.forEach((row, index) => {
+        row.style.setProperty('--i', index);
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // Add floating animation to avatar circles
+    const avatars = document.querySelectorAll('.avatar-circle');
+    avatars.forEach(avatar => {
+        avatar.addEventListener('mouseenter', function() {
+            this.style.animation = 'float 1s ease-in-out infinite';
+        });
+        avatar.addEventListener('mouseleave', function() {
+            this.style.animation = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

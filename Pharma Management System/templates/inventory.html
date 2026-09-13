@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="inventory-container">
+    <div class="page-header text-center mb-5">
+        <h1 class="display-4 text-white mb-3">
+            <i class="fas fa-pills"></i> Medicine Inventory
+        </h1>
+        <p class="lead text-white-50">Manage your pharmaceutical stock</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <button class="btn creative-btn btn-gradient-success btn-lg" data-bs-toggle="modal" data-bs-target="#addMedicineModal">
+                <i class="fas fa-plus-circle"></i> Add New Medicine
+            </button>
+        </div>
+    </div>
+
+    <div class="creative-card">
+        <div class="card-header bg-gradient-secondary text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-warehouse"></i> Stock Overview
+            </h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table creative-table mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-capsules"></i> Medicine</th>
+                            <th><i class="fas fa-tags"></i> Category</th>
+                            <th><i class="fas fa-dollar-sign"></i> Price</th>
+                            <th><i class="fas fa-boxes"></i> Stock</th>
+                            <th><i class="fas fa-calendar-times"></i> Expiry</th>
+                            <th><i class="fas fa-cogs"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medicine in medicines %}
+                        <tr class="medicine-row">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="medicine-icon me-3">
+                                        <i class="fas fa-pills"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ medicine.name }}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info rounded-pill">
+                                    {{ medicine.category }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="price-tag">
+                                    ${{ "%.2f"|format(medicine.price) }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if medicine.stock < 10 %}
+                                    <span class="badge bg-danger rounded-pill pulse-animation">
+                                        <i class="fas fa-exclamation-triangle"></i> {{ medicine.stock }}
+                                    </span>
+                                {% elif medicine.stock < 50 %}
+                                    <span class="badge bg-warning rounded-pill">
+                                        <i class="fas fa-minus-circle"></i> {{ medicine.stock }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-success rounded-pill">
+                                        <i class="fas fa-check-circle"></i> {{ medicine.stock }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="expiry-date">
+                                    <i class="fas fa-calendar"></i> {{ medicine.expiry_date }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm creative-btn btn-gradient-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addMedicineModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-radius-creative">
+            <form method="POST" action="/add_medicine">
+                <div class="modal-header bg-gradient-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle"></i> Add New Medicine
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-pills text-primary"></i> Medicine Name
+                            </label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter medicine name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-tags text-info"></i> Category
+                            </label>
+                            <select name="category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="Pain Relief">Pain Relief</option>
+                                <option value="Antibiotic">Antibiotic</option>
+                                <option value="Antihistamine">Antihistamine</option>
+                                <option value="Antacid">Antacid</option>
+                                <option value="Blood Pressure">Blood Pressure</option>
+                                <option value="Diabetes">Diabetes</option>
+                                <option value="Respiratory">Respiratory</option>
+                                <option value="Vitamin">Vitamin</option>
+                                <option value="Supplement">Supplement</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-dollar-sign text-success"></i> Price
+                            </label>
+                            <input type="number" name="price" class="form-control" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-boxes text-warning"></i> Stock Quantity
+                            </label>
+                            <input type="number" name="stock" class="form-control" placeholder="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-times text-danger"></i> Expiry Date
+                            </label>
+                            <input type="date" name="expiry_date" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn creative-btn btn-gradient-success">
+                        <i class="fas fa-plus"></i> Add Medicine
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.inventory-container {
+    animation: fadeInScale 0.8s ease-out;
+}
+
+.medicine-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.price-tag {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.1em;
+}
+
+.expiry-date {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+.medicine-row {
+    animation-delay: calc(var(--i) * 0.1s);
+}
+
+.page-header {
+    animation: slideInUp 0.6s ease-out;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add staggered animation to medicine rows
+    const rows = document.querySelectorAll('.medicine-row');
+    rows.forEach((row, index) => {
+        row.style.setProperty('--i', index);
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // Add hover effects to medicine icons
+    const icons = document.querySelectorAll('.medicine-icon');
+    icons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.2) rotate(360deg)';
+            this.style.transition = 'all 0.3s ease';
+        });
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
+    });
+});
+</script>
+{% endblock %}
